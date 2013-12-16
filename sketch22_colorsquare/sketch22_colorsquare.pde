@@ -1,3 +1,8 @@
+// ## winniae@launsch.de 
+// ## License GPL v3
+//
+// ## Work under the following notices has been incorporated:
+//
 // P_1_0_01.pde
 // 
 // Generative Gestaltung, ISBN: 978-3-87439-759-9
@@ -8,16 +13,16 @@
 // http://www.generative-gestaltung.de
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this figdle except in compliance with the License.
+// you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-// Modifications by winn@launsch.de under License GPL v3
-// Can receive input data (x and y positions) from a Kinect via Synapse OSC events
+//
+// Modifications by winniae:
+// ## Can receive input data (x and y positions) from a Kinect via Synapse OSC events
 
 /**
  * changing colors and size by moving the mouse
@@ -44,9 +49,9 @@ boolean savePDF = false;
 
 
 void setup() {
-  size(720, 720);
+  size(displayWidth, displayHeight);
   noCursor();
-
+  
   oscP5 = new OscP5(this, 12347);
 }
 
@@ -62,9 +67,9 @@ void draw() {
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
     PVector rh = skeleton.getJoint("righthand").posScreen;
-    posX = round(map(rh.y, 0, 480, 720, 0));
-    posY = round(map(rh.x, 0, 680, 720, 0));
-
+    posX = round(map(rh.y,0,480,displayHeight,0));
+    posY = round(map(rh.x,0,680,720,0));
+    
     Joint rhJ = skeleton.getJoint("righthand");
     if (rhJ.hitDetected()) {
       background(255);
@@ -78,7 +83,7 @@ void draw() {
   background(posY/2, 100, 100);
 
   fill(360-posY/2, 100, 100);
-  rect(360, 360, posX+1, posX+1);
+  rect(displayWidth/2, displayHeight/2, posX+1, posX+1);
 
   // end of pdf recording
   if (savePDF) {
