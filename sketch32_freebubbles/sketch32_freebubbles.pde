@@ -9,9 +9,16 @@ Skeleton skeleton = new Skeleton();
 // five colors, fünf flächen
 int[] colors = {
 };
+int MAX_COLORS = 3;
+int MAX_WEIGHTS = 15;
 
 ArrayList<Bubble> bubbles = new ArrayList<Bubble>();
 long lastTime;
+// remember last left hand x position for movement detection
+// remember direction, too (always plus or minus 1)
+int lastLhX = 0;
+int lastDir = -1; 
+int MOV_THRESHOLD = 1;
 
 void setup() {
   colorMode(HSB, 100);
@@ -36,49 +43,31 @@ void draw() {
     PVector rh = skeleton.getJoint("righthand").posScreen;
     PVector lh = skeleton.getJoint("lefthand").posScreen;
 
-    int posX = round(map(constrain(rh.x, 200, 400), 200, 400, 0, displayWidth));
-    int posY = round(map(constrain(rh.y, 200, 400), 200, 400, 0, displayHeight));
-    int currentColor;
+    int posX = round(map(constrain(rh.x, 200, 400), 200, 400, 0, displayWidth-1));
+    int posY = round(map(constrain(rh.y, 200, 300), 200, 300, 0, displayHeight-1));
+    int volume = round(map(constrain(lh.y, 200, 300), 200, 300, 100, 0));
+    int currentColor, currentWeight;
+    boolean newBubble = false;
 
     // current color
     // draw pointer
-    if (posY < displayHeight/5) {
-      currentColor = colors[0];
-    }
-    else if (posY < displayHeight*2/5) {
-      currentColor = colors[1];
-    }
-    else if (posY < displayHeight*3/5) {
-      currentColor = colors[2];
-    }
-    else if (posY < displayHeight*4/5) {
-      currentColor = colors[3];
-    }
-    else {
-      currentColor = colors[4];
-    }
 
+    currentColor = colors[posY*MAX_COLORS/displayHeight];
+    currentWeight = posX*MAX_WEIGHTS/displayWidth;
 
     Joint lhJoint = skeleton.getJoint("lefthand");
+    int lhX = round(lh.x);
 
-    // special
-    if (lhJoint.hitDetected()) {
-      if (lhJoint.hitForward) {
-        // clear
-        bubbles.clear();
-      }
-      else if (lhJoint.hitDown) {
-        bubbles.add(new Bubble(posX, posY, 500, currentColor));
-      }
-      else if (lhJoint.hitLeft) {
-        bubbles.add(new Bubble(posX, posY, 1000, currentColor));
-      }
-      else if (lhJoint.hitRight) {
-        bubbles.add(new Bubble(posX, posY, 2000, currentColor));
-      }
-      else if (lhJoint.hitUp) {
-        bubbles.add(new Bubble(posX, posY, 4000, currentColor));
-      }
+    //if (frameCount % 60 == 0) {
+    //  println(frameCount + " " + lhX + " " + lastLhX + " " + lastDir);
+    //}
+    if (abs(lhX - lastLhX) > MOV_THRESHOLD && (lhX - lastLhX) * lastDir < 0) {
+      // hit detection depending simply on movement
+      lastLhX = lhX;
+      lastDir *= -1; 
+
+      bubbles.add(new Bubble(posX, posY, 4000, currentColor, currentWeight, volume));
+      newBubble = true;
 
       // reset or it may draw too often
       lhJoint.resetHit();
@@ -97,32 +86,38 @@ void draw() {
 
     // pointer
     strokeWeight(5);
-    fill(currentColor);
-    ellipse(posX, posY, 30, 30);
+    stroke(0, 20);
+    fill(currentColor, 20);
+    ellipse(posX, posY, newBubble?60:30, newBubble?60:30);
   }
 }
 
 
 class Bubble {
   // duration in milliseconds
-  int posX, posY, duration, bubbleColor;
+  // bubbleColor depends on the y-axis value, the display is separated into 3 layers
+  // weight depends on the x-axis value, the display is separated into 15 layers
+  int posX, posY, duration, remaining, bubbleColor, weight, volume;
 
-  Bubble(int posX, int posY, int duration, int bubbleColor) {
+  Bubble(int posX, int posY, int duration, int bubbleColor, int weight, int volume) {
     this.posX = posX;
     this.posY = posY;
     this.duration = duration;
+    this.remaining = duration;
     this.bubbleColor = bubbleColor;
+    this.weight = weight;
+    this.volume = volume * 2 + 50;
   }
 
   void draw() {
     strokeWeight(0);
-    fill(bubbleColor);
-    ellipse(posX, posY, sqrt(duration)*5, sqrt(duration)*5);
+    fill(bubbleColor, map(weight, 0, MAX_WEIGHTS, 10, 100));
+    ellipse(posX, posY, volume * remaining/duration, volume*remaining/duration);
   }
 
   void update(int millisGone) {
-    this.duration -= millisGone;
-    if (this.duration <=0) {
+    this.remaining -= millisGone;
+    if (this.remaining <=0) {
       bubbles.remove(this);
     }
   }
