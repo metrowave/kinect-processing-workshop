@@ -163,7 +163,7 @@ class Skeleton {
   
   // what joint positions should we ask Synapse for?
   // 1: body pos, 2: world pos, 3: screen pos
-  int jointPosType = 3;
+  int jointPosType = 1;
   
   // used for data request timing
   // since Synapse must be pinged every so often or 
