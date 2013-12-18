@@ -36,17 +36,11 @@
  * p                   : save pdf
  */
 
-import processing.pdf.*;
-import java.util.Calendar;
-
 import oscP5.*;
 OscP5 oscP5;
 
 // our Synapse tracked skeleton data
 Skeleton skeleton = new Skeleton();
-
-boolean savePDF = false;
-
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -57,51 +51,40 @@ void setup() {
 
 
 void draw() {
-  // this line will start pdf export, if the variable savePDF was set to true 
-  if (savePDF) beginRecord(PDF, timestamp()+".pdf");
-
   int posX = mouseX;
   int posY = mouseY;
+  
   // update and draw the skeleton if it's being tracked
   skeleton.update(oscP5);
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
+    // get position of the right hand
     PVector rh = skeleton.getJoint("righthand").posScreen;
+    
+    // translate (map) the kinect position values to screen values
     posX = round(map(rh.y,0,480,displayHeight,0));
     posY = round(map(rh.x,0,680,720,0));
     
+    // if a hit is detected, draw a white background to for a "flashing" effect
     Joint rhJ = skeleton.getJoint("righthand");
     if (rhJ.hitDetected()) {
       background(255);
     }
   }
 
-
+  // set the mode for later color definitions
   colorMode(HSB, 360, 100, 100);
-  rectMode(CENTER); 
+  // draw no border
   noStroke();
+  // draw background in one color
   background(posY/2, 100, 100);
 
+  // set the color to fill the rectangle with
   fill(360-posY/2, 100, 100);
+  // interprets the first two parameters of rect() as the shape's center point, while the third and fourth parameters are its width and height.
+  rectMode(CENTER);
+  // draw the centered square
   rect(displayWidth/2, displayHeight/2, posX+1, posX+1);
-
-  // end of pdf recording
-  if (savePDF) {
-    savePDF = false;
-    endRecord();
-  }
-}
-
-
-void keyPressed() {
-  if (key=='s' || key=='S') saveFrame(timestamp()+"_##.png");
-  if (key=='p' || key=='P') savePDF = true;
-}
-
-
-String timestamp() {
-  Calendar now = Calendar.getInstance();
-  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", now);
 }
 
 
