@@ -39,7 +39,8 @@ int actRandomSeed = 0;
 int max_distance = 500; 
 
 void setup() {
-  size(600, 600, OPENGL);
+  // use OpenGL if translate() is utilized
+  size(600, 600);//, OPENGL);
 
   // what joint positions should we ask Synapse for?
   // 1: body pos, 2: world pos, 3: screen pos
@@ -59,6 +60,7 @@ void draw() {
     PVector rh = skeleton.getJoint("righthand").posBody;
     PVector lh = skeleton.getJoint("lefthand").posBody;
 
+    // map values
     posX = round(map(constrain(lh.x, 280, 680), 280, 680, 0, 600));
     posY = round(map(constrain(lh.y, 280, 680), 280, 680, 0, 600));
 
@@ -68,24 +70,25 @@ void draw() {
 
   // ## color depending on speed and pitch
   colorMode(HSB, 100);
+  background(sqrt(speed *pitch));
   fill(speed, 100, 100);
   moduleColor = color(100-pitch, 100, 100);
-  // ## end
-
-  background(sqrt(speed *pitch));
   smooth();
 
   stroke(moduleColor, moduleAlpha);
   strokeWeight(10);
+  rectMode(CENTER);
 
   for (int gridY=0; gridY<width; gridY+=25) {
     for (int gridX=0; gridX<height; gridX+=25) {
       float diameter = dist(posX, posY, gridX, gridY);
       diameter = diameter/max_distance * 40;
-      pushMatrix();
-      translate(gridX, gridY, diameter*5);
-      rect(0, 0, diameter, diameter);    //// also nice: ellipse(...)
-      popMatrix();
+      // with OpenGL uncomment following lines
+      //pushMatrix();
+      //translate(gridX, gridY, diameter*5);
+      //rect(0, 0, diameter, diameter);    //// also nice: ellipse(...)
+      //popMatrix();
+      rect(gridX, gridY, diameter, diameter);
     }
   }
 }
