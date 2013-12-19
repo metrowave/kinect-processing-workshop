@@ -16,6 +16,10 @@ PVector velocity;
 float speedFactor = 10;
 
 void setup() {
+  // what joint positions should we ask Synapse for?
+  // 1: body pos, 2: world pos, 3: screen pos
+  skeleton.jointPosType = 1;
+
   oscP5 = new OscP5(this, 12347);
 
   size(displayWidth, displayHeight);
@@ -37,11 +41,11 @@ void draw() {
   skeleton.update(oscP5);
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
-    PVector rh = skeleton.getJoint("righthand").posScreen;
+    PVector rh = skeleton.getJoint("righthand").posBody;
     // TODO going to map this
-    ballR = round(map(constrain(rh.y, 0, 200), 0, 200, displayHeight*3/8, 0));
+    ballR = round(map(constrain(rh.y, 280, 680), 280, 680, 0, displayHeight*3/8));
     float oldSpeedFactor = speedFactor;
-    speedFactor = map(rh.x, 0, 480, 1, 100);
+    speedFactor = map(rh.x, 180, 680, 1, 100);
     velocity.x *= speedFactor/oldSpeedFactor;
     velocity.y *= speedFactor/oldSpeedFactor;
   }
