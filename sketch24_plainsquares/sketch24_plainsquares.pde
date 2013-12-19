@@ -40,6 +40,11 @@ int max_distance = 500;
 
 void setup() {
   size(600, 600, OPENGL);
+
+  // what joint positions should we ask Synapse for?
+  // 1: body pos, 2: world pos, 3: screen pos
+  skeleton.jointPosType = 1;
+
   oscP5 = new OscP5(this, 12347);
 }
 
@@ -51,16 +56,14 @@ void draw() {
   skeleton.update(oscP5);
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
-    PVector rh = skeleton.getJoint("righthand").posScreen;
-    PVector lh = skeleton.getJoint("lefthand").posScreen;
+    PVector rh = skeleton.getJoint("righthand").posBody;
+    PVector lh = skeleton.getJoint("lefthand").posBody;
 
-    posX = round(map(lh.x, 0, 800, 0, 600));
-    // TODO let's try the depth as Y value
-    posY = round(map(lh.y, 0, 600, 0, 600));
-    //posY = 300; // TODO or just fix it for now?!? left-right movement only
+    posX = round(map(constrain(lh.x, 280, 680), 280, 680, 0, 600));
+    posY = round(map(constrain(lh.y, 280, 680), 280, 680, 0, 600));
 
-    speed = round(map(rh.x, 280, 680, 0, 100));
-    pitch = round(map(rh.y, 280, 680, 0, 100));
+    speed = round(map(constrain(rh.x, 280, 680), 280, 680, 0, 100));
+    pitch = round(map(constrain(rh.y, 280, 680), 280, 680, 0, 100));
   }
 
   // ## color depending on speed and pitch
@@ -71,16 +74,12 @@ void draw() {
 
   background(sqrt(speed *pitch));
   smooth();
-  //noFill();
-
-
 
   stroke(moduleColor, moduleAlpha);
   strokeWeight(10);
 
   for (int gridY=0; gridY<width; gridY+=25) {
     for (int gridX=0; gridX<height; gridX+=25) {
-
       float diameter = dist(posX, posY, gridX, gridY);
       diameter = diameter/max_distance * 40;
       pushMatrix();
