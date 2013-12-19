@@ -34,13 +34,14 @@ void draw() {
     PVector torso = skeleton.getJoint("torso").posWorld;
     posX = round(map(constrain(abs(rh.x), 0, 1000), 0, 1000, 0, displayWidth));
     posY = round(map(constrain(abs(rh.y), 0, 1000), 0, 1000, 0, displayHeight));
-    posZ = round(map(torso.z, 0, 8000, 0, displayHeight));
+    posZ = round(constrain(torso.z, 1000, 4000));
+    println(posZ);
   }
 
 
   beginCamera();
   camera();
-  translate(posX-winWidth/2, 0, winWidth/2-posZ*2);
+  translate(posX-winWidth/2, 0, 6000-posZ*4);
   rotateX(radians(map(posY, 0, displayHeight, -45, 90)));
   endCamera();
 
