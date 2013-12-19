@@ -9,7 +9,7 @@ https://github.com/winniae/Synapse-Templates
 benötigt Processing.org library:  
 http://www.sojamo.de/libraries/oscP5/
 1. Skeleton Datei in Projekt kopieren
-2. 
+2. OSC und Skeleton Objekt erzeugen
 <pre>
 import oscP5.*;
 OscP5 oscP5;
@@ -20,7 +20,7 @@ void setup() {
   oscP5 = new OscP5(this, 12347);
 }
 </pre>
-3. 
+3. Minimal Skeleton drawing
 <pre>
 void draw() {
   skeleton.update(oscP5);
@@ -30,7 +30,7 @@ void draw() {
   }
 }
 </pre>
-4. 
+4. Muss vorhanden sein damit das Skeleton die Daten von OSC bekommt.
 <pre>
 // OSC CALLBACK FUNCTIONS
 
@@ -38,7 +38,7 @@ void oscEvent(OscMessage m) {
   skeleton.parseOSC(m);
 }
 </pre>
-5. Welche Kinect Daten
+5. Kinect Positionsdaten Auswahl
 <pre>
 setup() {
   // what joint positions should we ask Synapse for?
