@@ -15,7 +15,6 @@ import oscP5.*;
 OscP5 oscP5;
 // our Synapse tracked skeleton data
 Skeleton skeleton = new Skeleton();
-
 void setup() {
   oscP5 = new OscP5(this, 12347);
 }
@@ -33,7 +32,6 @@ void draw() {
 4. Muss vorhanden sein damit das Skeleton die Daten von OSC bekommt.
 <pre>
 // OSC CALLBACK FUNCTIONS
-
 void oscEvent(OscMessage m) {
   skeleton.parseOSC(m);
 }
