@@ -8,6 +8,7 @@ OscP5 oscP5;
 Skeleton skeleton = new Skeleton();
 
 Movie movie1, movie2, movie3;
+boolean fullscreen = false;
 
 void setup() {
   size(displayWidth, displayHeight);
@@ -37,13 +38,20 @@ void draw() {
   skeleton.update(oscP5);
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
-    PVector rh = skeleton.getJoint("righthand").posBody;
+    Joint head = skeleton.getJoint("head");
     PVector lh = skeleton.getJoint("lefthand").posBody;
 
     //posX = round(map(constrain(lh.x,240,680), 240, 680, 0, displayWidth));
     //posY = round(map(constrain(lh.y,240,680), 240, 680, 0, displayHeight));
     posX = round(constrain(abs(lh.x), 240, 680));
     posY = round(constrain(abs(lh.y), 240, 680));
+
+    if (head.hitDetected() && head.hitLeft) {
+      fullscreen = true;
+    }
+    if (head.hitDetected() && head.hitRight) {
+      fullscreen = false;
+    }
   }
 
   // fade out movie image
@@ -59,21 +67,36 @@ void draw() {
   //if (posX > 0 && posX < displayWidth/3) {
   if (posX >= 260 && posX < 400) {
     movie1.loop();
-    image(movie1, 160, displayHeight/2);
+    if (fullscreen) {
+      image(movie1, 0, 0, displayWidth, displayHeight);
+    }
+    else {
+      image(movie1, 160, displayHeight/2);
+    }  
     movie2.pause();
     movie3.pause();
   }
   //if (posX > displayWidth/3 && posX < displayWidth*2/3) {
   if (posX >= 400 && posX < 540) {
     movie2.loop();
-    image(movie2, 160 + displayWidth/3, displayHeight/2);
+    if (fullscreen) {
+      image(movie2, 0, 0, displayWidth, displayHeight);
+    }
+    else {
+      image(movie2, 160 + displayWidth/3, displayHeight/2);
+    }
     movie1.pause();
     movie2.pause();
   }
   //if (posX > displayWidth*2/3 && posX < displayWidth) {
   if (posX > 540) {
     movie3.loop();
-    image(movie3, 160 + displayWidth*2/3, displayHeight/2);
+    if (fullscreen) {
+      image(movie3, 0, 0, displayWidth, displayHeight);
+    }
+    else {
+      image(movie3, 160 + displayWidth*2/3, displayHeight/2);
+    }
     movie1.pause();
     movie2.pause();
   }
