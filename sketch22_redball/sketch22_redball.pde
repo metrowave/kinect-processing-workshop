@@ -6,8 +6,8 @@ OscP5 oscP5;
 // our Synapse tracked skeleton data
 Skeleton skeleton = new Skeleton();
 
-int WIN_X = 800;
-int WIN_Y = 600;
+int WIN_X = displayWidth;
+int WIN_Y = displayHeight;
 int ballX;
 int ballY;
 int ballR;
@@ -17,9 +17,10 @@ float speedFactor = 10;
 
 void setup() {
   oscP5 = new OscP5(this, 12347);
+
+  size(displayWidth, displayHeight);
   WIN_X = displayWidth;
   WIN_Y = displayHeight;
-  size(WIN_X, WIN_Y);
   // red ball starting position
   ballX = WIN_X/2;
   ballY = WIN_Y/2;
@@ -38,8 +39,11 @@ void draw() {
     // update parameters depending on kinect skelecton data
     PVector rh = skeleton.getJoint("righthand").posScreen;
     // TODO going to map this
-    ballR = round(rh.y);
-    speedFactor = map(rh.x,0,600,1,100);
+    ballR = round(map(constrain(rh.y, 0, 200), 0, 200, displayHeight*3/8, 0));
+    float oldSpeedFactor = speedFactor;
+    speedFactor = map(rh.x, 0, 480, 1, 100);
+    velocity.x *= speedFactor/oldSpeedFactor;
+    velocity.y *= speedFactor/oldSpeedFactor;
   }
 
 
@@ -47,10 +51,10 @@ void draw() {
   background(255);
 
   // draw red Ball
-  fill(230, 20, 20);
+  fill(230, 20, 20, 55+2*speedFactor);
   strokeWeight(0);
   ellipse(ballX, ballY, ballR*2, ballR*2);
-  
+
 
   // update ball position
   ballX += velocity.x;
