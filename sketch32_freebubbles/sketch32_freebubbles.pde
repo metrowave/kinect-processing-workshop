@@ -30,6 +30,7 @@ float amplitude = 15.0;  // Height of wave (default 75.0)
 float period = 250.0;  // How many pixels before the wave repeats (default 500.0)
 float dx;  // Value for incrementing X, a function of period and xspacing
 float[] yvalues;  // Using an array to store height values for the wave
+float[] yvaluesDistort;
 // end wave
 
 void setup() {
@@ -43,6 +44,10 @@ void setup() {
   // use full screen size 
   size(displayWidth, displayHeight);
   background(100);
+  
+  // what joint positions should we ask Synapse for?
+  // 1: body pos, 2: world pos, 3: screen pos
+  skeleton.jointPosType = 1;
 
   oscP5 = new OscP5(this, 12347);
   lastTime = millis();
@@ -51,6 +56,7 @@ void setup() {
   w = width+16;
   dx = (TWO_PI / period) * xspacing;
   yvalues = new float[w/minxspacing];
+  yvaluesDistort = new float[w/minxspacing];
 }
 
 void draw() {
@@ -165,6 +171,7 @@ void calcWave() {
     // add some randomness to the amplitude!!
     float myAmplitude = amplitude;
     //myAmplitude += random(-40, 40);
+    yvaluesDistort[i] += random(-1,1);
 
     float newYValue = sin(x)*myAmplitude;
     yvalues[i] = newYValue;//(yvalues[i]+newYValue)/2;
@@ -177,9 +184,9 @@ void renderWave() {
   fill(0,70);
   // A simple way to draw the wave with an ellipse at each location
   for (int x = 0; x < yvalues.length; x++) {
-    ellipse((x*xspacing), (height/6+yvalues[x]), 16, 16);
-    ellipse((x*xspacing), (height/2+yvalues[x]), 16, 16);
-    ellipse((x*xspacing), (height*5/6+yvalues[x]), 16, 16);
+    //ellipse((x*xspacing), (height/6+yvalues[x]), 16, 16);
+    ellipse((x*xspacing), (height/2+yvalues[x]+(yvaluesDistort[x]*abs((frameCount%200)-100)/100)), 16, 16);
+    //ellipse((x*xspacing), (height*5/6+yvalues[x]), 16, 16);
   }
 }
 // end wave
