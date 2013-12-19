@@ -46,6 +46,10 @@ void setup() {
   size(displayWidth, displayHeight);
   noCursor();
   
+  // what joint positions should we ask Synapse for?
+  // 1: body pos, 2: world pos, 3: screen pos
+  skeleton.jointPosType = 1;
+  
   oscP5 = new OscP5(this, 12347);
 }
 
@@ -59,11 +63,11 @@ void draw() {
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
     // get position of the right hand
-    PVector rh = skeleton.getJoint("righthand").posScreen;
+    PVector rh = skeleton.getJoint("righthand").posBody;
     
     // translate (map) the kinect position values to screen values
-    posX = round(map(rh.y,0,480,displayHeight,0));
-    posY = round(map(rh.x,0,680,720,0));
+    posX = round(map(constrain(abs(rh.y),100,680),100,680,displayHeight,0));
+    posY = round(map(constrain(abs(rh.x),100,680),100,680,720,0));
     
     // if a hit is detected, draw a white background to for a "flashing" effect
     Joint rhJ = skeleton.getJoint("righthand");

@@ -61,8 +61,8 @@ void draw() {
     PVector lh = skeleton.getJoint("lefthand").posBody;
 
     // map values
-    posX = round(map(constrain(lh.x, 280, 680), 280, 680, 0, 600));
-    posY = round(map(constrain(lh.y, 280, 680), 280, 680, 0, 600));
+    posX = round(map(constrain(abs(lh.x), 280, 680), 280, 680, 600, 0));
+    posY = round(map(constrain(abs(lh.y), 280, 680), 280, 680, 600, 0));
 
     speed = round(map(constrain(rh.x, 280, 680), 280, 680, 0, 100));
     pitch = round(map(constrain(rh.y, 280, 680), 280, 680, 0, 100));

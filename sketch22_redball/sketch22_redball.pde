@@ -43,9 +43,9 @@ void draw() {
     // update parameters depending on kinect skelecton data
     PVector rh = skeleton.getJoint("righthand").posBody;
     // TODO going to map this
-    ballR = round(map(constrain(rh.y, 280, 680), 280, 680, 0, displayHeight*3/8));
+    ballR = round(map(constrain(rh.y, 100, 680), 100, 680, 0, displayHeight*3/8));
     float oldSpeedFactor = speedFactor;
-    speedFactor = map(rh.x, 180, 680, 1, 100);
+    speedFactor = map(rh.x, 100, 680, 1, 100);
     velocity.x *= speedFactor/oldSpeedFactor;
     velocity.y *= speedFactor/oldSpeedFactor;
   }
