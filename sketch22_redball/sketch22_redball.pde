@@ -42,10 +42,13 @@ void draw() {
   if (skeleton.isTracking()) {
     // update parameters depending on kinect skelecton data
     PVector rh = skeleton.getJoint("righthand").posBody;
-    // TODO going to map this
     ballR = round(map(constrain(rh.y, 100, 680), 100, 680, 0, displayHeight*3/8));
+    
+    // remember old speedfactor temporarily
     float oldSpeedFactor = speedFactor;
+    // new speeffactory
     speedFactor = map(rh.x, 100, 680, 1, 100);
+    // adjust current velocity accordingly
     velocity.x *= speedFactor/oldSpeedFactor;
     velocity.y *= speedFactor/oldSpeedFactor;
   }
@@ -64,7 +67,7 @@ void draw() {
   ballX += velocity.x;
   ballY += velocity.y;
 
-  // apply noise
+  // apply noise bring in some randomness
   velocity.x += noise(ballX, ballY) - 0.5; 
   velocity.y += noise(ballY, ballX) - 0.5;
 

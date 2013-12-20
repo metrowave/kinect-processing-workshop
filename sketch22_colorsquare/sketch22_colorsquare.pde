@@ -30,10 +30,6 @@
  * MOUSE
  * position x          : size
  * position y          : color
- * 
- * KEYS
- * s                   : save png
- * p                   : save pdf
  */
 
 import oscP5.*;
